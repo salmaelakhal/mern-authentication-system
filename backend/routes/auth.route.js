@@ -1,6 +1,5 @@
 import express from 'express';
 import { signup, login, logout, verifyEmail } from '../controllers/auth.controller.js';
-import { verify } from 'crypto';
 
 const router = express.Router();
 
