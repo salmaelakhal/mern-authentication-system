@@ -7,7 +7,7 @@ import {
   sendWelcomeEmail,
   sendPasswordResetEmail,
   sendResetSuccessEmail
-} from "../mailtrap/emails.js";
+} from "../nodemailer/emails.js";
 
 import  User from "../models/user.model.js";
 

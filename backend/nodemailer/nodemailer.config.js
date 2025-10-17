@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const transporter = nodemailer.createTransport({
-  service: "gmail",
+  service: "gmail", // Gmail comme service
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_PASS,
@@ -13,16 +13,15 @@ export const transporter = nodemailer.createTransport({
 
 export const sendEmail = async (to, subject, html) => {
   try {
-    await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: `"Auth App" <${process.env.GMAIL_USER}>`,
       to,
       subject,
       html,
     });
-
-    console.log(`Email sent to ${to}`);
+    console.log("Email envoyé :", info.messageId);
   } catch (error) {
-    console.error("Error sending email:", error);
-    throw new Error(`Error sending email: ${error.message}`);
+    console.error("Erreur envoi email :", error);
+    throw error;
   }
 };
