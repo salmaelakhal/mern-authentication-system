@@ -8,7 +8,7 @@ function LoginPage() {
 
       {/* Contenu principal */}
       <div className="relative z-10 w-full max-w-md mx-4">
-        <div className="bg-black/60 backdrop-blur-md rounded-xl border border-green-400/30 shadow-2xl p-8 relative overflow-hidden">
+        <div className="bg-green/60 backdrop-blur-md rounded-xl border border-green-400/30 shadow-2xl p-8 relative overflow-hidden">
           {/* Effet de bordure animée */}
           <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-400/0 via-green-400/50 to-green-400/0 animate-pulse-slow"></div>
           <div className="absolute -inset-1 bg-gradient-to-r from-green-400 to-cyan-400 rounded-xl blur opacity-30 animate-pulse"></div>
@@ -17,13 +17,13 @@ function LoginPage() {
             {/* Logo/Header */}
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-cyan-400 rounded-lg mx-auto mb-4 flex items-center justify-center shadow-lg shadow-green-400/25">
-                <span className="text-black font-bold text-xl font-mono">#</span>
+                <span className="text-green font-bold text-xl font-mono">#</span>
               </div>
               <h1 className="text-3xl font-bold text-green-400 mb-2 font-mono tracking-wider">
                 SYSTEM_ACCESS
               </h1>
               <p className="text-green-300/80 text-lg font-mono animate-pulse">
-                IDENTIFICATION_REQUIRED
+                IDENTIFICATION_REQUIgreen
               </p>
             </div>
 
@@ -35,7 +35,7 @@ function LoginPage() {
                 </label>
                 <input
                   type="email"
-                  className="w-full px-4 py-3 bg-black/40 border border-green-400/30 rounded-lg text-green-400 font-mono placeholder-green-600 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-green-400 transition-all duration-300"
+                  className="w-full px-4 py-3 bg-green/40 border border-green-400/30 rounded-lg text-green-400 font-mono placeholder-green-600 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-green-400 transition-all duration-300"
                   placeholder="ENTER_EMAIL"
                 />
               </div>
@@ -46,7 +46,7 @@ function LoginPage() {
                 </label>
                 <input
                   type="password"
-                  className="w-full px-4 py-3 bg-black/40 border border-green-400/30 rounded-lg text-green-400 font-mono placeholder-green-600 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-green-400 transition-all duration-300"
+                  className="w-full px-4 py-3 bg-green/40 border border-green-400/30 rounded-lg text-green-400 font-mono placeholder-green-600 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-green-400 transition-all duration-300"
                   placeholder="••••••••"
                 />
               </div>
@@ -55,7 +55,7 @@ function LoginPage() {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 text-green-400 bg-black/40 border-green-400/30 rounded focus:ring-green-400/50"
+                    className="w-4 h-4 text-green-400 bg-green/40 border-green-400/30 rounded focus:ring-green-400/50"
                   />
                   <span className="ml-2 text-sm text-green-300 font-mono">REMEMBER_ACCESS</span>
                 </label>
@@ -66,7 +66,7 @@ function LoginPage() {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600 text-black font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-green-400/50 shadow-lg shadow-green-400/25 font-mono tracking-wider"
+                className="w-full bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600 text-green font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-green-400/50 shadow-lg shadow-green-400/25 font-mono tracking-wider"
               >
                 [EXECUTE_LOGIN]
               </button>
