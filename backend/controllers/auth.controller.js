@@ -144,7 +144,7 @@ export const forgotPassword = async (req, res) => {
 		const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour
 
 		user.resetPasswordToken = resetToken;
-		user.resetPasswordExpiresAt = resetTokenExpiresAt;
+		user.resetPasswordTokenExpiresAt = resetTokenExpiresAt;
 
 		await user.save();
 
@@ -165,7 +165,7 @@ export const resetPassword = async (req, res) => {
 
 		const user = await User.findOne({
 			resetPasswordToken: token,
-			resetPasswordExpiresAt: { $gt: Date.now() },
+			resetPasswordTokenExpiresAt: { $gt: Date.now() },
 		});
 
 		if (!user) {
@@ -177,7 +177,7 @@ export const resetPassword = async (req, res) => {
 
 		user.password = hashedPassword;
 		user.resetPasswordToken = undefined;
-		user.resetPasswordExpiresAt = undefined;
+		user.resetPasswordTokenExpiresAt = undefined;
 		await user.save();
 
 		await sendResetSuccessEmail(user.email);
