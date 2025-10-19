@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -43,12 +43,35 @@ function EmailVerificationPage() {
   // ✅ Collage depuis n’importe quel champ
   const handlePaste = (e) => {
     e.preventDefault();
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, 6);
     const newCode = Array(6).fill("");
     pasted.split("").forEach((char, i) => (newCode[i] = char));
     setCode(newCode);
     inputRefs.current[Math.min(pasted.length, 6) - 1]?.focus();
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const verificationCode = code.join("");
+    console.log("Verification code submitted:", verificationCode);
+    // try {
+    // 	await verifyEmail(verificationCode);
+    // 	navigate("/");
+    // 	toast.success("Email verified successfully");
+    // } catch (error) {
+    // 	console.log(error);
+    // }
+  };
+
+  // Auto submit when all fields are filled
+  useEffect(() => {
+    if (code.every((digit) => digit !== "")) {
+      handleSubmit(new Event("submit"));
+    }
+  }, [code]);
 
   return (
     <div className="max-w-md w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden">
@@ -65,7 +88,7 @@ function EmailVerificationPage() {
           Enter the 6-digit code sent to your email address.
         </p>
 
-        <form className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex justify-between" onPaste={handlePaste}>
             {code.map((digit, index) => (
               <input
