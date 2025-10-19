@@ -2,35 +2,23 @@ import { Check, X } from "lucide-react";
 
 const PasswordCriteria = ({ password }) => {
 	const criteria = [
-		{ label: "≥ 6 characters", met: password.length >= 6 },
-		{ label: "UPPERCASE letter", met: /[A-Z]/.test(password) },
-		{ label: "lowercase letter", met: /[a-z]/.test(password) },
-		{ label: "Digit [0-9]", met: /\d/.test(password) },
-		{ label: "Special char [!@#$%]", met: /[^A-Za-z0-9]/.test(password) },
+		{ label: "At least 6 characters", met: password.length >= 6 },
+		{ label: "Contains uppercase letter", met: /[A-Z]/.test(password) },
+		{ label: "Contains lowercase letter", met: /[a-z]/.test(password) },
+		{ label: "Contains a number", met: /\d/.test(password) },
+		{ label: "Contains special character", met: /[^A-Za-z0-9]/.test(password) },
 	];
 
 	return (
-		<div className='mt-3 space-y-2'>
-			<div className='text-xs text-cyan-400 font-mono mb-2'>[PASSWORD_CRITERIA]</div>
+		<div className='mt-2 space-y-1'>
 			{criteria.map((item) => (
-				<div key={item.label} className='flex items-center text-xs font-mono'>
+				<div key={item.label} className='flex items-center text-xs'>
 					{item.met ? (
-						<div className='relative mr-3'>
-							<Check className='size-3 text-green-400' />
-							<div className='absolute inset-0 bg-green-400 blur-[1px] opacity-50' />
-						</div>
+						<Check className='size-4 text-green-500 mr-2' />
 					) : (
-						<div className='relative mr-3'>
-							<X className='size-3 text-red-400' />
-							<div className='absolute inset-0 bg-red-400 blur-[1px] opacity-50' />
-						</div>
+						<X className='size-4 text-gray-500 mr-2' />
 					)}
-					<span className={item.met ? "text-green-400 glow-green" : "text-gray-500"}>
-						{item.met ? "[PASS] " : "[FAIL] "}{item.label}
-					</span>
-					{item.met && (
-						<div className='ml-2 text-green-400 animate-pulse'>✓</div>
-					)}
+					<span className={item.met ? "text-green-500" : "text-gray-400"}>{item.label}</span>
 				</div>
 			))}
 		</div>
@@ -46,7 +34,6 @@ const PasswordStrengthMeter = ({ password }) => {
 		if (pass.match(/[^a-zA-Z\d]/)) strength++;
 		return strength;
 	};
-
 	const strength = getStrength(password);
 
 	const getColor = (strength) => {
@@ -57,83 +44,33 @@ const PasswordStrengthMeter = ({ password }) => {
 		return "bg-green-500";
 	};
 
-	const getGlowColor = (strength) => {
-		if (strength === 0) return "shadow-red-500/50";
-		if (strength === 1) return "shadow-red-400/50";
-		if (strength === 2) return "shadow-yellow-500/50";
-		if (strength === 3) return "shadow-yellow-400/50";
-		return "shadow-green-500/50";
-	};
-
 	const getStrengthText = (strength) => {
-		const texts = [
-			{ text: "CRITICAL FAILURE", color: "text-red-400" },
-			{ text: "WEAK PROTECTION", color: "text-red-300" },
-			{ text: "MODERATE SECURITY", color: "text-yellow-400" },
-			{ text: "STRONG DEFENSE", color: "text-yellow-300" },
-			{ text: "MAXIMUM SECURITY", color: "text-green-400" }
-		];
-		return texts[strength];
+		if (strength === 0) return "Very Weak";
+		if (strength === 1) return "Weak";
+		if (strength === 2) return "Fair";
+		if (strength === 3) return "Good";
+		return "Strong";
 	};
-
-	const strengthInfo = getStrengthText(strength);
 
 	return (
-		<div className='mt-4 p-4 border border-cyan-800/50 bg-black/40 rounded-lg backdrop-blur-sm'>
-			{/* Header */}
-			<div className='flex justify-between items-center mb-3'>
-				<span className='text-xs text-cyan-400 font-mono tracking-wider'>
-					[SECURITY_ANALYSIS]
-				</span>
-				<span className={`text-xs font-mono font-bold ${strengthInfo.color} animate-pulse`}>
-					{strengthInfo.text}
-				</span>
+		<div className='mt-2'>
+			<div className='flex justify-between items-center mb-1'>
+				<span className='text-xs text-gray-400'>Password strength</span>
+				<span className='text-xs text-gray-400'>{getStrengthText(strength)}</span>
 			</div>
 
-			{/* Strength Bars */}
-			<div className='flex space-x-1 mb-4'>
+			<div className='flex space-x-1'>
 				{[...Array(4)].map((_, index) => (
 					<div
 						key={index}
-						className={`h-2 w-1/4 rounded-full transition-all duration-500 ease-out
-							${index < strength ? 
-								`${getColor(strength)} ${getGlowColor(strength)} shadow-lg` 
-								: "bg-gray-800"
-							}
-							${index < strength ? 'animate-pulse' : ''}
-						`}
+						className={`h-1 w-1/4 rounded-full transition-colors duration-300 
+                ${index < strength ? getColor(strength) : "bg-gray-600"}
+              `}
 					/>
 				))}
 			</div>
-
-			{/* Progress Percentage */}
-			<div className='flex justify-between items-center mb-2'>
-				<span className='text-xs text-gray-400 font-mono'>PROGRESS:</span>
-				<span className='text-xs text-cyan-300 font-mono'>
-					{((strength / 4) * 100).toFixed(0)}%
-				</span>
-			</div>
-
-			{/* Loading Animation */}
-			<div className='w-full bg-gray-800 rounded-full h-1 mb-4'>
-				<div 
-					className={`h-1 rounded-full transition-all duration-1000 ease-out ${getColor(strength)}`}
-					style={{ width: `${(strength / 4) * 100}%` }}
-				/>
-			</div>
-
-			{/* Criteria */}
 			<PasswordCriteria password={password} />
-
-			{/* Footer */}
-			<div className='mt-3 pt-3 border-t border-cyan-900/30'>
-				<div className='text-xs text-gray-500 font-mono flex justify-between'>
-					<span>SYSTEM: AUTH_PROTOCOL</span>
-					<span>STATUS: {strength >= 3 ? "SECURE" : "VULNERABLE"}</span>
-				</div>
-			</div>
 		</div>
 	);
 };
-
-export default PasswordStrengthMeter;
+export default PasswordStrengthMeter; 

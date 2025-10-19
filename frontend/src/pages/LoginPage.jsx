@@ -1,7 +1,12 @@
-import React from 'react'
+import { Loader } from 'lucide-react';
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 function LoginPage() {
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const isLoading = false;
   return (
     <>
   {/* Effet de bruit numérique */}
@@ -68,8 +73,10 @@ function LoginPage() {
               <button
                 type="submit"
                 className="w-full bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600 text-green font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-green-400/50 shadow-lg shadow-green-400/25 font-mono tracking-wider"
+                disabled={isLoading}
               >
-                [EXECUTE_LOGIN]
+                {isLoading ?  <Loader className="w-6 h-6 animate-spin text-center mx-auto" /> : "[EXECUTE_LOGIN]"}
+              
               </button>
             </form>
 
