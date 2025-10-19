@@ -10,37 +10,44 @@ function EmailVerificationPage() {
   const isLoading = false;
 
   const handleChange = (index, value) => {
+    // 🔒 Autorise uniquement les chiffres
+    if (!/^[0-9]*$/.test(value)) return;
+
     const newCode = [...code];
 
-    // Si plusieurs caractères sont collés
+    // 🧩 Gestion du collage complet (ex: "123456")
     if (value.length > 1) {
-      const pastedCode = value.slice(0, 6).split("");
-      pastedCode.forEach((char, i) => {
-        newCode[i] = char || "";
-      });
+      const pasted = value.slice(0, 6).split("");
+      pasted.forEach((char, i) => (newCode[i] = char));
       setCode(newCode);
 
-      // Focus sur le dernier input rempli ou le premier vide
-      const lastFilledIndex = newCode.findLastIndex((d) => d !== "");
-      const focusIndex = lastFilledIndex < 5 ? lastFilledIndex + 1 : 5;
-      inputRefs.current[focusIndex]?.focus();
+      // Focus sur le dernier input rempli
+      inputRefs.current[Math.min(pasted.length, 6) - 1]?.focus();
       return;
     }
 
-    // Si un seul caractère est entré
+    // 🧠 Sinon, un seul caractère
     newCode[index] = value;
     setCode(newCode);
 
-    // Focus automatique sur le suivant si valeur saisie
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
+    // Focus suivant
+    if (value && index < 5) inputRefs.current[index + 1]?.focus();
   };
 
   const handleKeyDown = (index, e) => {
     if (e.key === "Backspace" && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
+  };
+
+  // ✅ Collage depuis n’importe quel champ
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    const newCode = Array(6).fill("");
+    pasted.split("").forEach((char, i) => (newCode[i] = char));
+    setCode(newCode);
+    inputRefs.current[Math.min(pasted.length, 6) - 1]?.focus();
   };
 
   return (
@@ -59,12 +66,13 @@ function EmailVerificationPage() {
         </p>
 
         <form className="space-y-6">
-          <div className="flex justify-between">
+          <div className="flex justify-between" onPaste={handlePaste}>
             {code.map((digit, index) => (
               <input
                 key={index}
                 ref={(el) => (inputRefs.current[index] = el)}
                 type="text"
+                inputMode="numeric"
                 maxLength="1"
                 value={digit}
                 onChange={(e) => handleChange(index, e.target.value)}
