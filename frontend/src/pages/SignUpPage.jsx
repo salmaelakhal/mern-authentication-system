@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
 
 function SignUpPage() {
   const [name, setName] = useState("");
@@ -23,12 +25,14 @@ function SignUpPage() {
           {/* Effet de bordure animée */}
           <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-400/0 via-green-400/50 to-green-400/0 animate-pulse-slow"></div>
           <div className="absolute -inset-1 bg-gradient-to-r from-green-400 to-cyan-400 rounded-xl blur opacity-30 animate-pulse"></div>
-          
+
           <div className="relative z-10">
             {/* Logo/Header */}
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-cyan-400 rounded-lg mx-auto mb-4 flex items-center justify-center shadow-lg shadow-green-400/25">
-                <span className="text-black font-bold text-xl font-mono">+</span>
+                <span className="text-black font-bold text-xl font-mono">
+                  +
+                </span>
               </div>
               <h1 className="text-3xl font-bold text-green-400 mb-2 font-mono tracking-wider">
                 NEW_ACCESS
@@ -82,7 +86,7 @@ function SignUpPage() {
                 />
               </div>
 
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <input
                   type="checkbox"
                   className="w-4 h-4 text-green-400 bg-black/40 border-green-400/30 rounded focus:ring-green-400/50"
@@ -90,7 +94,24 @@ function SignUpPage() {
                 <span className="ml-2 text-sm text-green-300 font-mono">
                   ACCEPT_TERMS
                 </span>
-              </div>
+              </div> */}
+
+              {/* Password strength meter  */}
+
+              <PasswordStrengthMeter password={password} />
+
+              {/* <motion.button
+						className='mt-5 w-full py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white 
+						font-bold rounded-lg shadow-lg hover:from-green-600
+						hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
+						 focus:ring-offset-gray-900 transition duration-200'
+						whileHover={{ scale: 1.02 }}
+						whileTap={{ scale: 0.98 }}
+						type='submit'
+						disabled={isLoading}
+					>Sign Up
+						{isLoading ? <Loader className=' animate-spin mx-auto' size={24} /> : "Sign Up"}
+			</motion.button> */}
 
               <button
                 type="submit"
@@ -104,8 +125,8 @@ function SignUpPage() {
             <div className="mt-8 pt-6 border-t border-green-400/20">
               <p className="text-center text-green-300/80 text-sm font-mono">
                 EXISTING_IDENTITY?{" "}
-                <Link 
-                  to="/login" 
+                <Link
+                  to="/login"
                   className="text-cyan-400 hover:text-cyan-300 font-bold transition-colors"
                 >
                   [LOGIN_ACCESS]

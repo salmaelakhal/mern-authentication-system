@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 function LoginPage() {
   return (
@@ -76,9 +77,9 @@ function LoginPage() {
             <div className="mt-8 pt-6 border-t border-green-400/20">
               <p className="text-center text-green-300/80 text-sm font-mono">
                 NO_ACCOUNT?{" "}
-                <a href="#" className="text-cyan-400 hover:text-cyan-300 font-bold transition-colors">
+                <Link to="/signup" className="text-cyan-400 hover:text-cyan-300 font-bold transition-colors">
                   [REQUEST_ACCESS]
-                </a>
+                </Link>
               </p>
             </div>
           </div>
