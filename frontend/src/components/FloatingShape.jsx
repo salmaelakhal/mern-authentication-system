@@ -10,6 +10,7 @@ const FloatingShape = ({
   blur = "blur-lg",
   type = "hologram"
 }) => {
+  
   // Animations différentes selon le type
   const getAnimation = (type) => {
     switch(type) {

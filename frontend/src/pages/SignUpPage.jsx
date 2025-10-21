@@ -1,19 +1,27 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
+import { useAuthStore } from "../store/authStore";
 
 function SignUpPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignUp = (e) => {
-    e.preventDefault();
-    // Logique d'inscription à implémenter
-    console.log({ name, email, password });
-  };
+	const { signup, error, isLoading } = useAuthStore();
 
+
+	const handleSignUp = async (e) => {
+		e.preventDefault();
+
+		try {
+			await signup(email, password, name);
+			Navigate("/verify-email");
+		} catch (error) {
+			console.log(error);
+		}
+	};
   return (
     <>
       {/* Effet de bruit numérique */}
