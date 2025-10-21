@@ -51,17 +51,27 @@ export const useAuthStore = create((set) => ({
 			throw error;
 		}
 	},
-	verifyEmail: async (code) => {
-		set({ isLoading: true, error: null });
-		try {
-			const response = await axios.post(`${API_URL}/verify-email`, { code });
-			set({ user: response.data.user, isAuthenticated: true, isLoading: false });
-			return response.data;
-		} catch (error) {
-			set({ error: error.response.data.message || "Error verifying email", isLoading: false });
-			throw error;
-		}
-	},
+verifyEmail: async (code) => {
+  set({ isLoading: true, error: null });
+  try {
+    const response = await axios.post(`${API_URL}/verify-email`, { code });
+    set({ 
+      user: response.data.user, 
+      isAuthenticated: true, 
+      isLoading: false,
+      error: null 
+    });
+    return response.data;
+  } catch (error) {
+    // 🔥 CORRECTION : Gestion correcte de l'erreur
+    const errorMessage = error.response?.data?.message || "Error verifying email";
+    set({ 
+      error: errorMessage, 
+      isLoading: false 
+    });
+    throw error; // Important : relancer l'erreur pour la catch dans le composant
+  }
+},
 	checkAuth: async () => {
 		set({ isCheckingAuth: true, error: null });
 		try {

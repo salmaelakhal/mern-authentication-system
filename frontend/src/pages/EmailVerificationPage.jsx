@@ -1,36 +1,32 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuthStore } from "../store/authStore";
+import toast from "react-hot-toast";
 
 function EmailVerificationPage() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
 
-  const isLoading = false;
+  const { error, isLoading, verifyEmail } = useAuthStore();
 
   const handleChange = (index, value) => {
-    // 🔒 Autorise uniquement les chiffres
     if (!/^[0-9]*$/.test(value)) return;
 
     const newCode = [...code];
 
-    // 🧩 Gestion du collage complet (ex: "123456")
     if (value.length > 1) {
       const pasted = value.slice(0, 6).split("");
       pasted.forEach((char, i) => (newCode[i] = char));
       setCode(newCode);
-
-      // Focus sur le dernier input rempli
       inputRefs.current[Math.min(pasted.length, 6) - 1]?.focus();
       return;
     }
 
-    // 🧠 Sinon, un seul caractère
     newCode[index] = value;
     setCode(newCode);
 
-    // Focus suivant
     if (value && index < 5) inputRefs.current[index + 1]?.focus();
   };
 
@@ -40,7 +36,6 @@ function EmailVerificationPage() {
     }
   };
 
-  // ✅ Collage depuis n’importe quel champ
   const handlePaste = (e) => {
     e.preventDefault();
     const pasted = e.clipboardData
@@ -54,22 +49,37 @@ function EmailVerificationPage() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+    
     const verificationCode = code.join("");
+    
+    // Vérifier que le code est complet
+    if (verificationCode.length !== 6) {
+      toast.error("Please enter a complete 6-digit code");
+      return;
+    }
+
     console.log("Verification code submitted:", verificationCode);
-    // try {
-    // 	await verifyEmail(verificationCode);
-    // 	navigate("/");
-    // 	toast.success("Email verified successfully");
-    // } catch (error) {
-    // 	console.log(error);
-    // }
+    
+    try {
+      await verifyEmail(verificationCode);
+      navigate("/");
+      toast.success("Email verified successfully");
+    } catch (err) {
+      // 🔥 CORRECTION : Utiliser l'erreur du store au lieu de err.response
+      const errorMessage = err.response?.data?.message || err.message || "Error verifying email";
+      toast.error(errorMessage);
+      
+      // Réinitialiser le code en cas d'erreur
+      setCode(["", "", "", "", "", ""]);
+      inputRefs.current[0]?.focus();
+    }
   };
 
-  // Auto submit when all fields are filled
+  // Auto-submit uniquement quand tous les champs sont remplis
   useEffect(() => {
     if (code.every((digit) => digit !== "")) {
-      handleSubmit(new Event("submit"));
+      handleSubmit();
     }
   }, [code]);
 
@@ -100,20 +110,55 @@ function EmailVerificationPage() {
                 value={digit}
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
-                className="w-12 h-12 text-center text-2xl font-bold bg-gray-700 text-white border-2 border-gray-600 rounded-lg focus:border-green-500 focus:outline-none"
+                className="w-12 h-12 text-center text-2xl font-bold bg-gray-700 text-white border-2 border-gray-600 rounded-lg focus:border-green-500 focus:outline-none transition-colors duration-200"
               />
             ))}
           </div>
+          
+          {/* 🔥 AFFICHAGE DE L'ERREUR DU STORE */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg"
+            >
+              <p className="text-red-400 text-center text-sm font-medium">
+                {error}
+              </p>
+            </motion.div>
+          )}
 
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             type="submit"
-            className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 disabled:opacity-50"
+            disabled={isLoading || code.some(digit => digit === "")}
+            className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
           >
-            {isLoading ? "Verifying..." : "Verify Email"}
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                Verifying...
+              </div>
+            ) : (
+              "Verify Email"
+            )}
           </motion.button>
         </form>
+
+        {/* Option pour renvoyer le code */}
+        <div className="mt-6 text-center">
+          <button
+            type="button"
+            className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors duration-200"
+            onClick={() => {
+              // Logique pour renvoyer le code
+              toast.success("New verification code sent!");
+            }}
+          >
+            Didn't receive code? Resend
+          </button>
+        </div>
       </motion.div>
     </div>
   );

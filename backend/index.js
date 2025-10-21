@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.route.js";
 
 dotenv.config();
 const app = express(); // ✅ créer l'app d'abord
+const PORT = process.env.PORT || 8000;
 
 // Middlewares
 app.use(
@@ -22,7 +23,6 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 
 // DB + Server
-const PORT = process.env.PORT || 8000;
 connectDB().then(() => {
   app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 });
