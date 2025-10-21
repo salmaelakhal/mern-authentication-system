@@ -63,13 +63,12 @@ verifyEmail: async (code) => {
     });
     return response.data;
   } catch (error) {
-    // 🔥 CORRECTION : Gestion correcte de l'erreur
     const errorMessage = error.response?.data?.message || "Error verifying email";
     set({ 
       error: errorMessage, 
       isLoading: false 
     });
-    throw error; // Important : relancer l'erreur pour la catch dans le composant
+    throw error; 
   }
 },
 	checkAuth: async () => {

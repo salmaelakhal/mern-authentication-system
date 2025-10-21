@@ -146,6 +146,7 @@ function EmailVerificationPage() {
           </motion.button>
         </form>
 
+
         {/* Option pour renvoyer le code */}
         <div className="mt-6 text-center">
           <button
@@ -163,5 +164,5 @@ function EmailVerificationPage() {
     </div>
   );
 }
-
+ 
 export default EmailVerificationPage;
