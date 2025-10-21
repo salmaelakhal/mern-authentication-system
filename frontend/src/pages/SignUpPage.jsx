@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
 import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
 import { useAuthStore } from "../store/authStore";
+import { Loader } from "lucide-react"; // Import ajouté
+
 
 function SignUpPage() {
   const [name, setName] = useState("");
@@ -10,6 +11,7 @@ function SignUpPage() {
   const [password, setPassword] = useState("");
 
 	const { signup, error, isLoading } = useAuthStore();
+  const navigate = useNavigate();
 
 
 	const handleSignUp = async (e) => {
@@ -17,7 +19,7 @@ function SignUpPage() {
 
 		try {
 			await signup(email, password, name);
-			Navigate("/verify-email");
+			navigate("/verify-email");
 		} catch (error) {
 			console.log(error);
 		}
@@ -105,6 +107,7 @@ function SignUpPage() {
               </div> */}
 
               {/* Password strength meter  */}
+					{error && <p className='text-red-500 font-semibold mt-2'>{error}</p>}
 
               <PasswordStrengthMeter password={password} />
 
@@ -124,8 +127,12 @@ function SignUpPage() {
               <button
                 type="submit"
                 className="w-full bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600 text-black font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-green-400/50 shadow-lg shadow-green-400/25 font-mono tracking-wider"
+                disabled={isLoading}
+
               >
-                [CREATE_ACCOUNT]
+                						{isLoading ? <Loader className=' animate-spin mx-auto' size={24} /> : "[CREATE_ACCOUNT]"}
+ 
+               
               </button>
             </form>
 
