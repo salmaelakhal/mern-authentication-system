@@ -2,19 +2,59 @@ import FloatingShape from "./components/FloatingShape";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { useAuthStore } from "./store/authStore";
+import { useEffect } from "react";
+import DashboardPage from './pages/DashboardPage';
 
+
+// protect routes that require authentication
+const ProtectedRoute = ({ children }) => {
+	const { isAuthenticated, user } = useAuthStore();
+
+	if (!isAuthenticated) {
+		return <Navigate to='/login' replace />;
+	}
+
+	if (!user.isVerified) {
+		return <Navigate to='/verify-email' replace />;
+	}
+
+	return children;
+};
+
+
+ 
+// redirect authenticated users to the home page
+const RedirectAuthenticatedUser = ({ children }) => {
+  const { isAuthenticated, user } = useAuthStore();
+
+  if (isAuthenticated && user.isVerified) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
 
 function App() {
+  const { isCheckingAuth, checkAuth, isAuthenticated, user } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  console.log("isAuthenticated :", isAuthenticated);
+  console.log("user:", user);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-green-900 flex items-center justify-center relative overflow-hidden">
       {/* Effet de scan ligne */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-green-500/5 to-transparent animate-scan"></div>
-      
+
       {/* Grille de fond */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,0,0.1)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]"></div>
-      
+
       {/* Cercles holographiques style hacker */}
       <FloatingShape
         color="from-green-400 to-cyan-400"
@@ -78,10 +118,32 @@ function App() {
       />
 
       <Routes>
-        <Route path='/' element={"home "} />
-        <Route path='/signup' element={<SignUpPage />} />
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/verify-email' element={<EmailVerificationPage />} />
+       <Route
+					path='/'
+					element={
+						<ProtectedRoute>
+							<DashboardPage />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path='/signup'
+					element={
+						<RedirectAuthenticatedUser>
+							<SignUpPage />
+						</RedirectAuthenticatedUser>
+					}
+				/>
+				<Route
+					path='/login'
+					element={
+						<RedirectAuthenticatedUser>
+							<LoginPage />
+						</RedirectAuthenticatedUser>
+					}
+				/>
+        
+        <Route path="/verify-email" element={<EmailVerificationPage />} />
       </Routes>
       <Toaster />
     </div>
