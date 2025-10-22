@@ -81,12 +81,12 @@ function LoginPage() {
                     REMEMBER_ACCESS
                   </span>
                 </label>
-                <a
-                  href="#"
+                <Link
+                  to="/forgot-password"
                   className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors font-mono"
                 >
                   FORGOT_PASSWORD?
-                </a>
+                </Link>
               </div>
               {error && (
                 <p className="text-red-500 text-sm font-mono">{error}</p>
