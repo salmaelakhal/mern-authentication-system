@@ -153,6 +153,8 @@ function App() {
         <Route path="/verify-email" element={<EmailVerificationPage />} />
         <Route path="/forgot-password" element={ <RedirectAuthenticatedUser><ForgetPasswordPage /></RedirectAuthenticatedUser> } />
         <Route path="/reset-password/:token" element={<RedirectAuthenticatedUser><ResetPasswordPage  /></RedirectAuthenticatedUser>} />
+
+        {/* // Fallback route to redirect unknown paths to home page */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Toaster />
