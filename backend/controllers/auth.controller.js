@@ -16,57 +16,49 @@ import  User from "../models/user.model.js";
 
 
 export const signup = async (req, res) => {
-  const { email, password, name } = req.body;
+	const { email, password, name } = req.body;
 
-  try {
-    console.log("📝 Tentative d'inscription pour:", email);
-    
-    if (!email || !password || !name) {
-      throw new Error("All fields are required");
-    }
+	try {
+		if (!email || !password || !name) {
+			throw new Error("All fields are required");
+		}
 
-    const userAlreadyExists = await User.findOne({ email });
-    console.log("🔍 Utilisateur existe déjà:", !!userAlreadyExists);
+		const userAlreadyExists = await User.findOne({ email });
+		console.log("userAlreadyExists", userAlreadyExists);
 
-    if (userAlreadyExists) {
-      return res.status(400).json({ success: false, message: "User already exists" });
-    }
+		if (userAlreadyExists) {
+			return res.status(400).json({ success: false, message: "User already exists" });
+		}
 
-    const hashedPassword = await bcryptjs.hash(password, 10);
-    const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
+		const hashedPassword = await bcryptjs.hash(password, 10);
+		const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const user = new User({
-      email,
-      password: hashedPassword,
-      name,
-      verificationToken,
-      verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
-    });
+		const user = new User({
+			email,
+			password: hashedPassword,
+			name,
+			verificationToken,
+			verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+		});
 
-    await user.save();
-    console.log("✅ Utilisateur créé avec ID:", user._id);
+		await user.save();
 
-    generateTokenAndSetCookie(res, user._id);
+		// jwt
+		generateTokenAndSetCookie(res, user._id);
 
-    // Log avant envoi email
-    console.log("📤 Envoi email de vérification à:", user.email);
-    console.log("🔑 Token de vérification:", verificationToken);
-    
-    await sendVerificationEmail(user.email, verificationToken);
-    console.log("✅ Email de vérification envoyé");
+		await sendVerificationEmail(user.email, verificationToken);
 
-    res.status(201).json({
-      success: true,
-      message: "User created successfully",
-      user: {
-        ...user._doc,
-        password: undefined,
-      },
-    });
-  } catch (error) {
-    console.error("❌ Erreur inscription:", error);
-    res.status(400).json({ success: false, message: error.message });
-  }
+		res.status(201).json({
+			success: true,
+			message: "User created successfully",
+			user: {
+				...user._doc,
+				password: undefined,
+			},
+		});
+	} catch (error) {
+		res.status(400).json({ success: false, message: error.message });
+	}
 };
 
 export const verifyEmail = async (req, res) => {
